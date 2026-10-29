@@ -84,7 +84,7 @@ class MainActivity : Activity() {
 
     // ---------- Escaneo ----------
 
-    private val tick = object : Runnable {
+    private val tick: Runnable = object : Runnable {
         override fun run() {
             if (!scanning) return
             send(address(), command)
