@@ -84,25 +84,22 @@ class MainActivity : Activity() {
 
     // ---------- Escaneo ----------
 
-    private val tick: Runnable = object : Runnable {
-        override fun run() {
-            if (!scanning) return
-            send(address(), command)
-            refreshInfo()
-            // Se deja 'command' como el último enviado; avanza en el siguiente ciclo
-            handler.postDelayed({
-                if (scanning) {
-                    command = (command + 1) and 0xFF
-                    tick.run()
-                }
-            }, if (fastScan.isChecked) 500L else 1200L)
-        }
+    private fun scanStep() {
+        if (!scanning) return
+        send(address(), command)
+        refreshInfo()
+        handler.postDelayed({
+            if (scanning) {
+                command = (command + 1) and 0xFF
+                scanStep()
+            }
+        }, if (fastScan.isChecked) 500L else 1200L)
     }
 
     private fun startScan() {
         scanning = true
         scanBtn.text = "Detener"
-        tick.run()
+        scanStep()
     }
 
     private fun stopScan() {
@@ -232,3 +229,5 @@ class MainActivity : Activity() {
         root.addView(savedBox)
 
         setContentView(ScrollView(this).apply { addView(root) })
+    }
+}
